@@ -9,6 +9,7 @@ Pensado para desplegarse desde una cuenta **Azure for Students** (u otra suscrip
 - `infra/` — plantillas Bicep (VNet, NSG, VMs, IPs públicas) y parámetros.
 - `scripts/` — despliegue, encendido/apagado, reseteo de una VM, destrucción total, gestión de accesos.
 - `docs/decisiones.md` — comparación de regiones/tamaños de VM y por qué se eligió cada uno.
+- `docs/inicio-rapido.md` — cómo instalar y conectar Azure CLI (`az login`, suscripción, resource providers) desde cero en una cuenta nueva, y `scripts/setup-entorno.sh` para automatizarlo.
 - `docs/guia-instalacion.md` — guía paso a paso para instalar Wazuh, enrolar el agente Windows y ejecutar las pruebas de verificación (autenticación, FIM, MITRE T1059), incluyendo problemas reales encontrados y su solución.
 - `docs/enunciado-resumen.md` — resumen de los requisitos técnicos que este proyecto satisface.
 
@@ -17,9 +18,8 @@ Pensado para desplegarse desde una cuenta **Azure for Students** (u otra suscrip
 ## Prerrequisitos
 
 - macOS/Linux con [Homebrew](https://brew.sh) (o gestor de paquetes equivalente).
-- Azure CLI: `brew install azure-cli`
 - Una suscripción de Azure activa (ej. "Azure for Students").
-- `az login` y confirmar la suscripción correcta con `az account show`.
+- Azure CLI instalado y conectado (`az login` + suscripción correcta) — ver `docs/inicio-rapido.md` para la guía completa desde cero, o usar `scripts/setup-entorno.sh` (paso 1 abajo) para automatizarlo.
 
 ## Despliegue rápido
 
@@ -27,13 +27,16 @@ Pensado para desplegarse desde una cuenta **Azure for Students** (u otra suscrip
 git clone git@github.com:juanguillermo1983/proyecto-azure-wahzu.git
 cd proyecto-azure-wahzu
 
+# 0. Instalar/conectar Azure CLI, registrar providers y generar secretos (ver docs/inicio-rapido.md)
+scripts/setup-entorno.sh
+
 # 1. Revisar/ajustar región y tamaños de VM si tu suscripción tiene otras cuotas disponibles
 #    (ver docs/decisiones.md para el método de comparación usado)
 $EDITOR infra/main.bicepparam
 $EDITOR infra/config.env
 
 # 2. (Opcional) agregar compañeros de equipo con acceso SSH/RDP
-cp infra/equipo-acceso.example.txt infra/equipo-acceso.txt
+#    (scripts/setup-entorno.sh ya creó infra/equipo-acceso.txt desde la plantilla)
 $EDITOR infra/equipo-acceso.txt
 
 # 3. Ver el plan sin crear nada (por defecto)
@@ -43,7 +46,7 @@ scripts/deploy.sh whatif
 scripts/deploy.sh apply
 ```
 
-El script genera automáticamente un par de llaves SSH y una contraseña de Windows en `infra/.secrets/` (ignorado por git — nunca se sube). El NSG solo permite SSH/RDP/HTTPS desde tu IP pública (detectada automáticamente) y desde las IPs que agregues en `infra/equipo-acceso.txt`.
+`scripts/setup-entorno.sh` genera un par de llaves SSH y una contraseña de Windows en `infra/.secrets/` (ignorado por git — nunca se sube); `scripts/deploy.sh` los reutiliza. El NSG solo permite SSH/RDP/HTTPS desde tu IP pública (detectada automáticamente) y desde las IPs que agregues en `infra/equipo-acceso.txt`.
 
 Luego sigue `docs/guia-instalacion.md` para instalar Wazuh y ejecutar las pruebas de verificación.
 

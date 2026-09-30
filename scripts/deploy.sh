@@ -3,15 +3,10 @@
 set -uo pipefail
 source "$(dirname "$0")/lib.sh"
 MODE="${1:-whatif}"
-SECRETS="$ROOT/infra/.secrets"; mkdir -p "$SECRETS"; chmod 700 "$SECRETS"
+SECRETS="$ROOT/infra/.secrets"
 
 # Clave SSH y contraseña Windows: se generan una vez y se reutilizan (no van al repositorio)
-[ -f "$SECRETS/id_ed25519" ] || ssh-keygen -q -t ed25519 -N "" -f "$SECRETS/id_ed25519" -C "$ADMIN_USER@lab-soc"
-if [ ! -f "$SECRETS/windows_password.txt" ]; then
-  # 20 caracteres con mayúscula, minúscula, dígito y símbolo (cumple política de Windows)
-  { LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c 18; echo 'aZ9!'; } | tr -d '\n' > "$SECRETS/windows_password.txt"
-  chmod 600 "$SECRETS/windows_password.txt"
-fi
+generate_secrets
 
 export MY_IP_CIDR="$("$ROOT/scripts/detect-ip.sh")"
 export SSH_PUBLIC_KEY="$(cat "$SECRETS/id_ed25519.pub")"

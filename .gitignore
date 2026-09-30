@@ -1,0 +1,13 @@
+infra/.secrets/
+.DS_Store
+
+# Datos de este despliegue específico / personales — no deben publicarse
+infra/equipo-acceso.txt
+docs/estado-actual.md
+docs/encender-apagar.md
+docs/equipo-acceso.md
+docs/evidencias/*.png
+docs/evidencias/*.jpeg
+docs/evidencias/*.jpg
+docs/Prueba1.pdf
+logs/

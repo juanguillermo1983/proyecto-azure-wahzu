@@ -1,0 +1,7 @@
+# IPs adicionales autorizadas para SSH/RDP/HTTPS (Puerto 22/3389/443), una por línea, formato CIDR (x.x.x.x/32).
+# La IP del titular de la cuenta se agrega sola (scripts/detect-ip.sh); este archivo es solo para compañeros de equipo.
+# Formato: IP/32  # nombre - fecha agregado
+#
+# Copia este archivo a infra/equipo-acceso.txt (ignorado por git) y agrega ahí las IPs reales de tu equipo.
+# Ejemplo:
+# 203.0.113.10/32  # Nombre Apellido - agregado 2026-01-15
